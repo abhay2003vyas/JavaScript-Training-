@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container" role="main">
+    <header>
+      <div>
+        <h1>Sign In</h1>
+        <div class="lead">Enter your credentials to continue.</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card" aria-labelledby="login-heading">
+        <h2 id="login-heading">User Login</h2>
+        <form id="loginForm" novalidate>
+          <div>
+            <label for="userId">User ID *</label>
+            <input id="userId" name="userId" type="text" required autocomplete="username" autofocus />
+            <div id="userIdError" class="error" aria-live="polite"></div>
+          </div>
+
+          <div>
+            <label for="password">Password *</label>
+            <input id="password" name="password" type="password" required autocomplete="current-password" />
+            <div id="passwordError" class="error" aria-live="polite"></div>
+          </div>
+
+          <div class="form-actions">
+            <button id="loginBtn" class="btn" type="submit">Sign In</button>
+            <div id="loginStatus" role="status" aria-live="polite"></div>
+          </div>
+        </form>
+
+        <div id="loginSuccess" class="success hidden">Signed in successfully ✅</div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const userId = document.getElementById('userId');
+    const password = document.getElementById('password');
+    const userIdError = document.getElementById('userIdError');
+    const passwordError = document.getElementById('passwordError');
+    const loginStatus = document.getElementById('loginStatus');
+    const loginSuccess = document.getElementById('loginSuccess');
+
+    function setErr(el, msg) { el.textContent = msg }
+    function clearErr(el) { el.textContent = '' }
+
+    function validate() {
+      let ok = true;
+      if (!userId.value.trim()) { setErr(userIdError, 'User ID is required'); ok = false } else { clearErr(userIdError) }
+      if (!password.value) { setErr(passwordError, 'Password is required'); ok = false } else { clearErr(passwordError) }
+      loginBtn.disabled = !ok;
+      return ok;
+    }
+
+    [userId, password].forEach(el => { el.addEventListener('input', validate); el.addEventListener('change', validate) });
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!validate()) return;
+
+      loginBtn.disabled = true;
+      loginStatus.textContent = 'Signing in...';
+      setTimeout(() => {
+        loginStatus.textContent = '';
+        loginForm.reset();
+        loginBtn.disabled = true;
+        loginSuccess.classList.remove('hidden');
+        setTimeout(() => loginSuccess.classList.add('hidden'), 3500);
+      }, 800);
+    });
+
+    // initial state
+    validate();
+  </script>
+</body>
+</html>

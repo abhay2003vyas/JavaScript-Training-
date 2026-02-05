@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container" role="main">
+        <header>
+            <div>
+                <h1>Sign Up</h1>
+                <div class="lead">A small demo of client-side form validation with accessible feedback.</div>
+            </div>
+            <div class="hint">Fields marked with * are required</div>
+        </header>
+
+        <form id="loginForm" novalidate>
+            <div>
+                <label for="userId">User ID *</label>
+                <input id="userId" name="userId" type="text" autocomplete="username" required />
+                <div id="userIdError" class="error" aria-live="polite"></div>
+            </div>
+
+            <div>
+                <label for="password">Password *</label>
+                <input id="password" name="password" type="password" required minlength="8" autocomplete="current-password" />
+                <div id="passwordError" class="error" aria-live="polite"></div>
+            </div>
+
+            <div class="form-actions">
+                <button id="submitBtn" class="btn" type="submit">Sign In</button>
+                <div id="formStatus" role="status" aria-live="polite"></div>
+            </div>
+        </form>
+
+        <div id="successBox" class="success hidden">Account created successfully! ✅</div>
+    </div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const userId = document.getElementById('userId');
+        const password = document.getElementById('password');
+        const userIdError = document.getElementById('userIdError');
+        const passwordError = document.getElementById('passwordError');
+        const status = document.getElementById('formStatus');
+        const successBox = document.getElementById('successBox');
+
+        function setError(el, msg){ el.textContent = msg }
+        function clearError(el){ el.textContent = '' }
+
+        function validate(){
+            let ok = true;
+            if(!userId.value.trim()){ setError(userIdError,'User ID is required'); ok=false } else { clearError(userIdError) }
+            if(password.value.length < 8){ setError(passwordError,'Password must be at least 8 characters'); ok=false } else { clearError(passwordError) }
+            submitBtn.disabled = !ok;
+            return ok;
+        }
+
+        [userId,password].forEach(el => { el.addEventListener('input', validate); el.addEventListener('change', validate) });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if(!validate()) return;
+            submitBtn.disabled = true;
+            status.textContent = 'Signing in...';
+            setTimeout(()=>{
+                status.textContent = '';
+                form.reset();
+                submitBtn.disabled = true;
+                successBox.classList.remove('hidden');
+                setTimeout(()=> successBox.classList.add('hidden'),3500);
+            },700);
+        });
+
+        // initial state
+        validate();
+    </script>
+</body>
+
+</html>
